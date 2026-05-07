@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kupunoli Sumi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --text: #1a1a18;
+      --muted: #7a7972;
+      --border: #dddbd4;
+      --accent: #1a1a18;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--serif);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      background: var(--bg);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    nav.scrolled { border-color: var(--border); }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-right {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-right a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-right a:hover { color: var(--text); }
+
+    /* HAMBURGER */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 1px; background: var(--text); transition: all 0.3s; }
+
+    /* HERO */
+    .hero {
+      padding: 14rem 3rem 6rem;
+      max-width: 900px;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--muted);
+    }
+    .hero p {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      max-width: 420px;
+      line-height: 1.8;
+    }
+
+    /* YEAR TAG */
+    .year-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    /* WORK GRID */
+    .work-section {
+      padding: 4rem 3rem 8rem;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2px;
+    }
+
+    .work-card {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--border);
+      text-decoration: none;
+    }
+    .work-card:hover .card-overlay { opacity: 1; }
+    .work-card:hover .card-img { transform: scale(1.04); }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+      display: block;
+    }
+
+    /* placeholder when no image */
+    .card-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--border);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,26,24,0.75);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .card-overlay .card-year {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 0.3rem;
+    }
+    .card-overlay .card-title {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .card-overlay .card-cat {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.55);
+      margin-top: 0.5rem;
+    }
+
+    /* FULL-WIDTH FEATURE */
+    .work-feature {
+      grid-column: 1 / -1;
+      aspect-ratio: 16/7;
+    }
+
+    /* LIST ROWS (alternative layout for smaller categories) */
+    .work-list {
+      border-top: 1px solid var(--border);
+    }
+    .work-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s;
+    }
+    .work-row:hover { padding-left: 0.5rem; }
+    .work-row-left { display: flex; gap: 2rem; align-items: baseline; }
+    .work-row-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      min-width: 2ch;
+    }
+    .work-row-title {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 300;
+    }
+    .work-row-tag {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .work-row-year {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    /* ABOUT */
+    .about-section {
+      padding: 6rem 3rem;
+      max-width: 700px;
+    }
+    .about-section h2 {
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 2rem;
+      color: var(--text);
+    }
+    .about-section p {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      line-height: 2;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* CONTACT */
+    .contact-section {
+      padding: 5rem 3rem 8rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .contact-section h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1;
+    }
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    .contact-links a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-links a:hover { color: var(--text); }
+
+    /* FOOTER */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer span {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    /* BACK TO TOP */
+    .back-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2.5rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      writing-mode: vertical-rl;
+      opacity: 0;
+      transition: opacity 0.3s, color 0.2s;
+    }
+    .back-top.visible { opacity: 1; }
+    .back-top:hover { color: var(--text); }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .nav-right { display: none; }
+      .hamburger { display: flex; }
+      nav.open .nav-links {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 60px; left: 0; right: 0; bottom: 0;
+        background: var(--bg);
+        padding: 3rem 1.5rem;
+        gap: 2rem;
+      }
+      nav.open .nav-links a { font-size: 1.1rem; }
+      nav.open .nav-right {
+        display: flex;
+        position: fixed;
+        bottom: 3rem;
+        left: 1.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .hero { padding: 9rem 1.5rem 4rem; }
+      .work-section { padding: 3rem 1.5rem 5rem; }
+      .work-grid { grid-template-columns: 1fr; }
+      .work-feature { aspect-ratio: 4/3; }
+      .about-section { padding: 4rem 1.5rem; }
+      .contact-section { padding: 4rem 1.5rem 6rem; flex-direction: column; align-items: flex-start; }
+      .contact-links { align-items: flex-start; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Kupunoli Sumi</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#integrative">Integrative Design</a></li>
+    <li><a href="#exploration">Exploration</a></li>
+    <li><a href="#cs">CS</a></li>
+    <li><a href="#personal">Personal</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="hamburger" id="burger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="year-tag">2026</div>
+  <h1>Kupunoli Sumi<br><em>Designer &amp; Developer</em></h1>
+  <p>Integrative design practice spanning interaction design, computation, and personal inquiry.</p>
+</section>
+
+<!-- WORK — INTEGRATIVE DESIGN STUDIO -->
+<section class="work-section" id="integrative">
+  <p class="section-label">Integrative Design Studio</p>
+  <div class="work-grid">
+    <a href="#" class="work-card work-feature">
+      <div class="card-placeholder">Add your project image here</div>
+      <div class="card-overlay">
+        <div class="card-year">2026</div>
+        <div class="card-title">Featured Project Title</div>
+        <div class="card-cat">Integrative Design Studio</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Project image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Project Two</div>
+        <div class="card-cat">Interaction Design</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Project image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Project Three</div>
+        <div class="card-cat">Systems Design</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Project image</div>
+      <div class="card-overlay">
+        <div class="card-year">2024</div>
+        <div class="card-title">Project Four</div>
+        <div class="card-cat">Visual Communication</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- EXPLORATION -->
+<section class="work-section" id="exploration">
+  <p class="section-label">Exploration</p>
+  <div class="work-grid">
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Exploration image</div>
+      <div class="card-overlay">
+        <div class="card-year">2026</div>
+        <div class="card-title">Exploration One</div>
+        <div class="card-cat">Exploration</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Exploration image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Exploration Two</div>
+        <div class="card-cat">Exploration</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Exploration image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Exploration Three</div>
+        <div class="card-cat">Exploration</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- CS -->
+<section class="work-section" id="cs">
+  <p class="section-label">CS</p>
+  <div class="work-list">
+    <a href="#" class="work-row">
+      <div class="work-row-left">
+        <span class="work-row-num">01</span>
+        <span class="work-row-title">CS Project One</span>
+      </div>
+      <div style="display:flex;gap:3rem;align-items:center;">
+        <span class="work-row-tag">Web Development</span>
+        <span class="work-row-year">2026</span>
+      </div>
+    </a>
+    <a href="#" class="work-row">
+      <div class="work-row-left">
+        <span class="work-row-num">02</span>
+        <span class="work-row-title">CS Project Two</span>
+      </div>
+      <div style="display:flex;gap:3rem;align-items:center;">
+        <span class="work-row-tag">Machine Learning</span>
+        <span class="work-row-year">2025</span>
+      </div>
+    </a>
+    <a href="#" class="work-row">
+      <div class="work-row-left">
+        <span class="work-row-num">03</span>
+        <span class="work-row-title">CS Project Three</span>
+      </div>
+      <div style="display:flex;gap:3rem;align-items:center;">
+        <span class="work-row-tag">Data Visualization</span>
+        <span class="work-row-year">2025</span>
+      </div>
+    </a>
+    <a href="#" class="work-row">
+      <div class="work-row-left">
+        <span class="work-row-num">04</span>
+        <span class="work-row-title">CS Project Four</span>
+      </div>
+      <div style="display:flex;gap:3rem;align-items:center;">
+        <span class="work-row-tag">Algorithms</span>
+        <span class="work-row-year">2024</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- PERSONAL PROJECTS -->
+<section class="work-section" id="personal">
+  <p class="section-label">Personal Projects</p>
+  <div class="work-grid">
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Personal project image</div>
+      <div class="card-overlay">
+        <div class="card-year">2026</div>
+        <div class="card-title">Personal Project One</div>
+        <div class="card-cat">Personal</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Personal project image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Personal Project Two</div>
+        <div class="card-cat">Personal</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="work-section" id="gallery">
+  <p class="section-label">Gallery</p>
+  <div class="work-grid">
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Gallery image</div>
+      <div class="card-overlay">
+        <div class="card-year">2026</div>
+        <div class="card-title">Gallery Item One</div>
+        <div class="card-cat">Photography / Art</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Gallery image</div>
+      <div class="card-overlay">
+        <div class="card-year">2026</div>
+        <div class="card-title">Gallery Item Two</div>
+        <div class="card-cat">Photography / Art</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Gallery image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Gallery Item Three</div>
+        <div class="card-cat">Photography / Art</div>
+      </div>
+    </a>
+    <a href="#" class="work-card">
+      <div class="card-placeholder">Gallery image</div>
+      <div class="card-overlay">
+        <div class="card-year">2025</div>
+        <div class="card-title">Gallery Item Four</div>
+        <div class="card-cat">Photography / Art</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <h2>About me</h2>
+  <p>
+    Hi, I'm Kupunoli Sumi — a designer and developer with an integrative practice that spans visual design, interaction, and computation. I'm interested in how technology and design can come together to create meaningful, human-centered experiences.
+  </p>
+  <p>
+    My work lives across the disciplines of integrative design, computer science, and personal exploration. I'm currently based in [your location].
+  </p>
+  <p>
+    <em style="font-family: var(--serif); font-size: 0.9rem;">Feel free to update this section with your own bio.</em>
+  </p>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <h2>Get in touch</h2>
+  <div class="contact-links">
+    <a href="mailto:your@email.com">your@email.com</a>
+    <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a>
+    <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+    <a href="https://instagram.com/yourhandle" target="_blank">Instagram</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Kupunoli Sumi</span>
+  <span>Designed &amp; built from scratch</span>
+</footer>
+
+<!-- BACK TO TOP -->
+<a href="#" class="back-top" id="backTop">↑ Top</a>
+
+<script>
+  const nav = document.getElementById('nav');
+  const backTop = document.getElementById('backTop');
+  const burger = document.getElementById('burger');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      nav.classList.add('scrolled');
+      backTop.classList.add('visible');
+    } else {
+      nav.classList.remove('scrolled');
+      backTop.classList.remove('visible');
+    }
+  });
+
+  burger.addEventListener('click', () => {
+    nav.classList.toggle('open');
+  });
+</script>
+</body>
+</html>
